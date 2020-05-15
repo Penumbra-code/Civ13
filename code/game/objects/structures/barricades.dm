@@ -61,7 +61,7 @@
 		if (material && D.get_material_name() != material.name)
 			return //hitting things with the wrong type of stack usually doesn't produce messages, and probably doesn't need to.
 		if (health < maxhealth)
-			if (D.get_amount() < 1)
+			if (D.amount < 1)
 				user << "<span class='warning'>You need one sheet of [material.display_name] to repair \the [src].</span>"
 				return
 			visible_message("<span class='notice'>[user] begins to repair \the [src].</span>")
@@ -216,6 +216,24 @@
 	material_name = "stone"
 	protection_chance = 75
 
+/obj/structure/barricade/sandstone_h/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	if (istype(W,/obj/item/weapon) && !istype(W,/obj/item/weapon/wrench) && !istype(W,/obj/item/weapon/hammer)) //No weapons can harm me! If not weapon and not a wrench.
+		user << "You hit the wall uselessly!"//sucker
+	else if (istype(W,/obj/item/weapon/sledgehammer))//if it is a wrench
+		user << "<span class='notice'>You start disassembling the [src]...</span>"
+		playsound(loc, 'sound/items/Screwdriver.ogg', 50, TRUE)
+		if (do_after(user, 30, target = src))
+			qdel(src)
+			return
+/obj/structure/barricade/sandstone_v/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	if (istype(W,/obj/item/weapon) && !istype(W,/obj/item/weapon/wrench) && !istype(W,/obj/item/weapon/hammer)) //No weapons can harm me! If not weapon and not a wrench.
+		user << "You hit the wall uselessly!"//sucker
+	else if (istype(W,/obj/item/weapon/sledgehammer))//if it is a wrench
+		user << "<span class='notice'>You start disassembling the [src]...</span>"
+		playsound(loc, 'sound/items/Screwdriver.ogg', 50, TRUE)
+		if (do_after(user, 30, target = src))
+			qdel(src)
+			return
 /obj/structure/barricade/sandstone_v/crenelated
 	name = "crenelated sandstone wall"
 	desc = "A wall of sandstone blocks."
@@ -331,7 +349,15 @@
 	maxhealth = 2709
 	material_name = "stone"
 	protection_chance = 90
-
+/obj/structure/barricade/stone_h/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	if (istype(W,/obj/item/weapon) && !istype(W,/obj/item/weapon/wrench) && !istype(W,/obj/item/weapon/hammer)) //No weapons can harm me! If not weapon and not a wrench.
+		user << "You hit the wall uselessly!"//sucker
+	else if (istype(W,/obj/item/weapon/sledgehammer))//if it is a wrench
+		user << "<span class='notice'>You start disassembling the [src]...</span>"
+		playsound(loc, 'sound/items/Screwdriver.ogg', 50, TRUE)
+		if (do_after(user, 30, target = src))
+			qdel(src)
+			return
 /obj/structure/barricade/stone_v
 	name = "stone wall"
 	desc = "A wall of stone blocks."
@@ -342,7 +368,15 @@
 	maxhealth = 2709
 	material_name = "stone"
 	protection_chance = 90
-
+/obj/structure/barricade/stone_v/attackby(obj/item/weapon/W as obj, mob/user as mob)
+	if (istype(W,/obj/item/weapon) && !istype(W,/obj/item/weapon/wrench) && !istype(W,/obj/item/weapon/hammer)) //No weapons can harm me! If not weapon and not a wrench.
+		user << "You hit the wall uselessly!"//sucker
+	else if (istype(W,/obj/item/weapon/sledgehammer))//if it is a wrench
+		user << "<span class='notice'>You start disassembling the [src]...</span>"
+		playsound(loc, 'sound/items/Screwdriver.ogg', 50, TRUE)
+		if (do_after(user, 30, target = src))
+			qdel(src)
+			return
 /obj/structure/barricade/stone_h/crenelated
 	name = "crenelated stone wall"
 	desc = "A wall of stone blocks."

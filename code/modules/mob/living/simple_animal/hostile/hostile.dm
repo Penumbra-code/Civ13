@@ -62,7 +62,7 @@
 			if (HM.messages["enemy_sighted"] && prob(25))
 				HM.say(HM.messages["enemy_sighted"],HM.language)
 
-		stance = HOSTILE_STANCE_ALERT
+		stance = HOSTILE_STANCE_ATTACK
 	return T
 
 
@@ -110,6 +110,7 @@
 			if (prob(3*dmod))
 				H.disease = TRUE
 				H.disease_type = "plague"
+
 		if (prob(95) || !can_bite_limbs_off)
 			H.apply_damage(damage, BRUTE, affecting, H.run_armor_check(affecting, "melee"), sharp=1, edge=1)
 		else
