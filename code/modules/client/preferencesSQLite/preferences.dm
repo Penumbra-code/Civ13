@@ -68,7 +68,7 @@ var/list/preferences_datums = list()
 
 	var/datum/category_collection/player_setup_collection/player_setup
 
-	var/list/preferences_enabled = list("SOUND_MIDI", "SOUND_LOBBY", "SOUND_AMBIENCE",
+	var/list/preferences_enabled = list("CHAT_OVERLAY","CHAT_TTS","SOUND_MIDI", "SOUND_LOBBY", "SOUND_AMBIENCE",
 		"CHAT_GHOSTEARS", "CHAT_GHOSTSIGHT", "CHAT_GHOSTRADIO", "CHAT_SHOWICONS",
 		"SHOW_TYPING", "CHAT_OOC", "CHAT_LOOC", "CHAT_DEAD", "SHOW_PROGRESS",
 		"CHAT_DEBUGLOGS", "CHAT_PRAYER", "SOUND_ADMINHELP")
@@ -151,7 +151,7 @@ var/list/preferences_datums = list()
 
 	return TRUE
 
-/datum/preferences/proc/copy_to(mob/living/carbon/human/character, safety = FALSE)
+/datum/preferences/proc/copy_to(mob/living/human/character, safety = FALSE)
 	// Sanitizing rather than saving as someone might still be editing when copy_to occurs.
 	player_setup.sanitize_setup()
 	if (be_random_name)

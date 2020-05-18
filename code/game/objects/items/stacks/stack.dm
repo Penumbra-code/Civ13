@@ -19,12 +19,14 @@
 	var/build_type = null //used when directly applied to a turf
 	var/real_value = 1
 	value = 1
+	var/can_stack = FALSE //Determines if stacks should be auto-merged.
 	var/customcolor = "FFFFFF"
 	var/customcolor1 = "000000"
 	var/customcolor2 = "FFFFFF"
 	var/customcode = "0000"
 	var/customname = ""
-/obj/item/stack/New(var/loc, var/_amount=0, var/merge = TRUE)
+
+/obj/item/stack/New(var/loc, var/_amount=0, var/merge = can_stack)
 	..()
 	if (!stacktype)
 		stacktype = type
@@ -67,7 +69,7 @@ obj/item/stack/Crossed(var/obj/item/stack/S)
 		return FALSE
 	return TRUE
 
-/obj/item/stack/proc/use(var/used,var/mob/living/carbon/human/H = null)
+/obj/item/stack/proc/use(var/used,var/mob/living/human/H = null)
 	if (!can_use(used))
 		return FALSE
 	if (H)
@@ -98,7 +100,7 @@ obj/item/stack/Crossed(var/obj/item/stack/S)
 
 //attempts to transfer amount to S, and returns the amount actually transferred
 /obj/item/stack/proc/transfer_to(obj/item/stack/S, var/_amount=null)
-	if ((stacktype != S.stacktype))
+	if (stacktype != S.stacktype)
 		return FALSE
 	if (isnull(_amount))
 		_amount = amount
@@ -133,18 +135,6 @@ obj/item/stack/Crossed(var/obj/item/stack/S)
 		return S
 	return FALSE
 
-/obj/item/stack/proc/add_to_stacks(mob/user as mob)
-	for (var/obj/item/stack/item in user.loc)
-		if (item==src)
-			continue
-		var/transfer = transfer_to(item)
-		if (transfer)
-			user << "<span class='notice'>You add a new [item.singular_name] to the stack. It now contains [item.amount] [item.singular_name]\s.</span>"
-			item.update_icon()
-			src.update_icon() //funcionou
-		if (!amount)
-			break
-
 /obj/item/stack/attack_hand(mob/user as mob)
 	if (user.get_inactive_hand() == src)
 		var/obj/item/stack/F = split(1)
@@ -166,7 +156,7 @@ obj/item/stack/Crossed(var/obj/item/stack/S)
 	if (istype(W, type))
 		var/obj/item/stack/S = W
 		merge(S)
-		W.update_icon()
+		S.update_icon()
 		src.update_icon()
 		spawn(0) //give the stacks a chance to delete themselves if necessary
 		if (S && usr.using_object == S)
@@ -292,7 +282,7 @@ obj/item/stack/Crossed(var/obj/item/stack/S)
 	var/customvar2 = ""
 	var/customdesc = ""
 	var/turn_dir = 0
-	var/mob/living/carbon/human/H = user
+	var/mob/living/human/H = user
 	var/obj/structure/religious/totem/newtotem = null
 	var/obj/structure/simple_door/key_door/custom/build_override_door = null
 	var/obj/item/weapon/key/civ/build_override_key = null
@@ -338,7 +328,7 @@ obj/item/stack/Crossed(var/obj/item/stack/S)
 		else if (H.religion == "Cultists")
 			H << "<span class = 'danger'>You cannot make a [recipe.title]; your religion type doesn't allow this.</span>"
 			return
-	if (findtext(recipe.title, "monumental ominous statue of the deep-one") || findtext(recipe.title, "monumental ominous statue of the evil-one") || findtext(recipe.title, "monumental ominous statue of the outsider"))
+	if (findtext(recipe.title, "monumental ominous statue of the deep-one") || findtext(recipe.title, "monumental ominous statue of the evil-one") || findtext(recipe.title, "monumental ominous statue of the outsider") || findtext(recipe.title, "monumental ominous statue of the ruler"))
 		if (H.religion == "none")
 			H << "<span class = 'danger'>You cannot make a [recipe.title] as you have no religion.</span>"
 			return
@@ -359,6 +349,22 @@ obj/item/stack/Crossed(var/obj/item/stack/S)
 			H << "<span class = 'danger'>You cannot make a [recipe.title] as you have no religion.</span>"
 			return
 		else if (H.religion == "Shamans")
+			H << "<span class = 'danger'>You cannot make a [recipe.title]; your religion type doesn't allow this.</span>"
+			return
+		else if (H.religion == "Priests")
+			H << "<span class = 'danger'>You cannot make a [recipe.title]; your religion type doesn't allow this.</span>"
+			return
+		else if (H.religion == "Cultists")
+			H << "<span class = 'danger'>You cannot make a [recipe.title]; your religion type doesn't allow this.</span>"
+			return
+		else if (H.religion == "Clerics")
+			H << "<span class = 'danger'>You cannot make a [recipe.title]; your religion type doesn't allow this.</span>"
+			return
+	if (findtext(recipe.title, "monumental statue of a giant ape"))
+		if (H.religion == "none")
+			H << "<span class = 'danger'>You cannot make a [recipe.title] as you have no religion.</span>"
+			return
+		else if (H.religion == "Monks")
 			H << "<span class = 'danger'>You cannot make a [recipe.title]; your religion type doesn't allow this.</span>"
 			return
 		else if (H.religion == "Priests")
@@ -1854,11 +1860,9 @@ obj/item/stack/Crossed(var/obj/item/stack/S)
 			build_override_vending.add_fingerprint(user)
 			qdel(O)
 			return
-
 		else if (istype(O, /obj/item/stack))
 			var/obj/item/stack/S = O
 			S.amount = produced
-			S.add_to_stacks(user)
 			S.update_icon()
 		else if (recipe.result_type == /obj/item/weapon/clay/verysmallclaypot)
 			new/obj/item/weapon/clay/verysmallclaypot(get_turf(O))
@@ -1928,7 +1932,7 @@ obj/item/stack/Crossed(var/obj/item/stack/S)
 			return
 
 		if (ishuman(usr))
-			var/mob/living/carbon/human/H = usr
+			var/mob/living/human/H = usr
 			if (H.can_build_recipe)
 				H.can_build_recipe = FALSE
 				produce_recipe(R, multiplier, usr)
